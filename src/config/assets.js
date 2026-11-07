@@ -33,6 +33,7 @@ export const ASSETS = {
     // Escenario y efectos
     tree: { url: 'assets/props/tree.png', frameWidth: 32, frameHeight: 44 },
     flowers: { url: 'assets/props/flowers.png', frameWidth: 7, frameHeight: 8 },
+    secretFlower: { url: 'assets/props/secret-flower.png', frameWidth: 9, frameHeight: 10 },
     emotes: { url: 'assets/fx/emotes.png', frameWidth: 9, frameHeight: 9 },
     // Abrazo de Miguel y Lía: los dos juntos en una sola imagen (2 frames de 34×28).
     hug: { url: 'assets/sprites/hug.png', frameWidth: 34, frameHeight: 28 },

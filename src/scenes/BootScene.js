@@ -43,6 +43,14 @@ export class BootScene extends Phaser.Scene {
       });
     }
 
+    // Flor secreta junto al estanque: se mece despacito
+    this.anims.create({
+      key: animKey('secretFlower', 'sway'),
+      frames: this.anims.generateFrameNumbers('secretFlower', { start: 0, end: 1 }),
+      frameRate: 1.2,
+      repeat: -1,
+    });
+
     // Abrazo de Miguel y Lía: abrazados (0) y apretándose un poquito (1)
     this.anims.create({
       key: animKey('hug', 'hold'),

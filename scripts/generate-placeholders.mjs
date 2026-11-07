@@ -291,6 +291,42 @@ function drawBlob(canvas, ox, oy, circles, colors, seed, blossom = false) {
     drawAscii(flowers, swayRows, pal, v * 14 + 7, 0);
   });
   save('props/flowers.png', flowers);
+
+  // Flor secreta (cerca del estanque): una rosita redonda de dos tonos de rosa,
+  // algo más grande que las flores normales pero con la misma paleta y sin
+  // contorno, para que se distinga sin llamar demasiado la atención.
+  // 2 frames de 9x10: normal y balanceo.
+  const secretRows = [
+    '...ppp...',
+    '..pPPPp..',
+    '.pPPCPPp.',
+    '..pPPPp..',
+    '...ppp...',
+    '....g....',
+    '.gg.g....',
+    '..ggg.gg.',
+    '....ggg..',
+    '....g....',
+  ];
+  const secretSway = [
+    '....ppp..',
+    '...pPPPp.',
+    '..pPPCPPp',
+    '...pPPPp.',
+    '....ppp..',
+    '....g....',
+    '.gg.g....',
+    '..ggg.gg.',
+    '....ggg..',
+    '....g....',
+  ];
+  const secret = createCanvas(18, 10);
+  const secretPal = { p: hex('#e07aa5'), P: hex('#f8b4cf'), C: hex('#ffe36e'), g: hex('#3f8a45') };
+  checkRows('flor secreta', secretRows, 9, 10);
+  checkRows('flor secreta (balanceo)', secretSway, 9, 10);
+  drawAscii(secret, secretRows, secretPal, 0, 0);
+  drawAscii(secret, secretSway, secretPal, 9, 0);
+  save('props/secret-flower.png', secret);
 }
 
 // ---------------------------------------------------------------------------

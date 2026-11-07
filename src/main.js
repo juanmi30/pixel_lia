@@ -3,6 +3,7 @@ import './style.css';
 import { GAME } from './config/game.js';
 import { BootScene } from './scenes/BootScene.js';
 import { ParkScene } from './scenes/ParkScene.js';
+import { LetterScene } from './scenes/LetterScene.js';
 import { WelcomeScene } from './scenes/WelcomeScene.js';
 
 /**
@@ -34,7 +35,7 @@ const game = new Phaser.Game({
   callbacks: {
     preBoot: (game) => game.registry.set('pixelScale', pixelScale),
   },
-  scene: [BootScene, WelcomeScene, ParkScene],
+  scene: [BootScene, WelcomeScene, ParkScene, LetterScene],
 });
 
 // Solo en desarrollo: acceso desde la consola del navegador para depurar.

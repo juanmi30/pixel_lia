@@ -8,20 +8,23 @@ export class Emotes {
     this.scene = scene;
   }
 
-  /** Lanza `count` emotes escalonados alrededor de (x, y). */
-  burst(name, x, y, count = 1) {
+  /**
+   * Lanza `count` emotes escalonados alrededor de (x, y).
+   * `options` permite un emote más discreto: { rise, durationMs }.
+   */
+  burst(name, x, y, count = 1, options = {}) {
     if (!(name in EMOTE_FRAMES)) {
       console.warn(`[emotes] emote desconocido: "${name}"`);
       return;
     }
     for (let i = 0; i < count; i++) {
       const jitter = count > 1 ? Math.round((i - (count - 1) / 2) * 6) : 0;
-      this.scene.time.delayedCall(i * BEHAVIOR.emote.staggerMs, () => this.spawn(name, x + jitter, y));
+      this.scene.time.delayedCall(i * BEHAVIOR.emote.staggerMs, () => this.spawn(name, x + jitter, y, options));
     }
   }
 
-  spawn(name, x, y) {
-    const { riseDistance, durationMs } = BEHAVIOR.emote;
+  spawn(name, x, y, { rise = BEHAVIOR.emote.riseDistance, durationMs = BEHAVIOR.emote.durationMs } = {}) {
+    const riseDistance = rise;
     const icon = this.scene.add.image(x, y, 'emotes', EMOTE_FRAMES[name]).setDepth(9000);
     icon.setOrigin(pixelCenterX(icon.width), 1);
 

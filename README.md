@@ -18,7 +18,15 @@ npm test          # pruebas de la lógica del mundo (node --test, sin dependenci
 
 ### Publicar en Netlify
 
-El repositorio ya incluye `netlify.toml` (`npm run build`, carpeta `dist`, Node 22). Basta con conectar el repo en Netlify, o arrastrar la carpeta `dist/` a https://app.netlify.com/drop.
+El repositorio ya incluye `netlify.toml`: Netlify ejecuta `npm run build` con Node 22 y publica la carpeta `dist/`.
+
+1. En Netlify: *Add new site → Import an existing project* y elegir este repositorio de GitHub.
+2. Netlify lee la configuración de `netlify.toml`; no hace falta cambiar nada. Cada push a `main` vuelve a publicar.
+3. Alternativa sin conectar el repo: `npm run build` y arrastrar la carpeta `dist/` a https://app.netlify.com/drop.
+
+Qué se publica: solo `dist/` (≈3,5 MB): el juego, las imágenes, la fuente y la música. Todas las rutas son relativas y funcionan con HTTPS. No se publican `docs/`, `scripts/`, `tests/` ni las fotos de referencia (que nunca se versionaron). El acceso de depuración `window.game` solo existe en `npm run dev`.
+
+Nota: el sitio de Netlify es público para quien tenga el enlace. Si quieres que solo lo vea Lía, Netlify permite protegerlo con contraseña (*Site configuration → Access control*, según el plan).
 
 ## Estructura
 
@@ -43,6 +51,7 @@ src/
     assets.js           Rutas y tamaños de frame de cada recurso
     characters.js       Personajes: velocidad, tiempos, animaciones, siesta
     dialogues.js        Todas las frases
+    letter.js           Texto de la carta secreta
     interactions.js     Encuentros espontáneos (y su coreografía especial)
     behavior.js         Tiempos y parámetros generales
     world.js            Zona caminable, árboles, banco, flores
@@ -50,12 +59,15 @@ src/
   systems/World.js             Límites y obstáculos (lógica pura)
   systems/InteractionDirector.js  Toques, encuentros espontáneos y siesta
   systems/specials.js          Coreografías: abrazo y juego de peluches
+  systems/SecretLetter.js      Abrir y cerrar la carta secreta (sin Phaser)
+  systems/pointer.js           A quién va cada toque (personajes, flor)
   systems/Music.js             Música de fondo y silencio
   ui/SpeechBubbles.js          Globos de diálogo
   ui/SoundToggle.js            Botón de sonido
   fx/Emotes.js                 Corazones y demás iconos
   scenes/BootScene.js          Carga de recursos y animaciones
   scenes/WelcomeScene.js       Pantalla de bienvenida
+  scenes/LetterScene.js        La carta secreta (encima del parque)
   scenes/ParkScene.js          La escena del parque
 tests/                  Pruebas (npm test)
 ```
@@ -148,13 +160,26 @@ Evidencia: `docs/art/interactions/` (GIF y capturas de cada interacción). Para 
 node docs/art/interactions/record-interactions.mjs
 ```
 
+## La flor secreta y la carta
+
+Junto a la orilla izquierda del estanque hay una rosita de dos tonos de rosa que brilla de vez en cuando. Al tocarla:
+
+- el parque se oscurece y queda en pausa (personajes, encuentros y temporizadores se congelan; la música sigue);
+- aparece la carta, con un corazón que late;
+- se cierra con el botón **Cerrar** o con **Escape**;
+- al cerrarla el parque sigue exactamente donde estaba y salen dos corazoncitos sobre Miguel y Lía.
+
+- **Texto:** `src/config/letter.js` (saludo, párrafos, firma y texto del botón). Cambiarlo no requiere tocar código.
+- **Flor:** `src/config/world.js → secretFlower` (posición, zona táctil y frecuencia del brillo). Está fuera de la zona caminable, así que nunca estorba a los personajes, y si un personaje está delante, el toque es para él.
+- **Evidencia:** `docs/art/letter/` (GIF de descubrimiento, apertura y cierre, y capturas en escritorio y celular).
+
 ## Pruebas
 
 ```bash
 npm test
 ```
 
-Las pruebas usan el `Character` y el `InteractionDirector` reales con una escena falsa con reloj manual (`tests/helpers/fakeScene.js`), así que no necesitan navegador. Cubren el abrazo, el juego, la siesta, los toques durante cada uno, los fallos de camino, el cierre de la escena y la geometría del parque.
+Las pruebas usan el `Character` y el `InteractionDirector` reales con una escena falsa con reloj manual (`tests/helpers/fakeScene.js`), así que no necesitan navegador. Cubren el abrazo, el juego, la siesta, la carta secreta (abrir, cerrar, reabrir, toques bloqueados, recuperación del parque y cierre de la escena con la carta abierta), los toques durante cada uno, los fallos de camino y la geometría del parque.
 
 ## Añadir un encuentro espontáneo
 

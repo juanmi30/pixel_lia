@@ -6,6 +6,8 @@
  *   `blocker` (opcional) es la huella que los personajes evitan al elegir destino,
  *   centrada en x y apoyada en y: { w, h }.
  * - `flowers`: flores decorativas que se balancean. `v` es la variante de color.
+ * - `secretFlower`: la flor escondida que abre la carta (src/config/letter.js).
+ *   Está entre el estanque y la zona caminable, así que nadie la pisa.
  */
 export const WORLD = {
   walkBounds: { x: 10, y: 60, width: 300, height: 114 },
@@ -37,4 +39,13 @@ export const WORLD = {
     { x: 202, y: 158, v: 2 }, { x: 230, y: 170, v: 3 }, { x: 258, y: 160, v: 0 },
     { x: 272, y: 176, v: 1 }, { x: 12, y: 176, v: 3 },
   ],
+
+  secretFlower: {
+    x: 258,
+    y: 55,
+    /** Zona táctil cuadrada (píxeles de arte), cómoda en el celular. */
+    hitSize: 20,
+    /** Cada cuánto brilla, discretamente (aleatorio entre ambos valores). */
+    sparkleEveryMs: [4500, 8500],
+  },
 };
