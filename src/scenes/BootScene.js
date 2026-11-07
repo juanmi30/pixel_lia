@@ -43,6 +43,14 @@ export class BootScene extends Phaser.Scene {
       });
     }
 
+    // Abrazo de Miguel y Lía: abrazados (0) y apretándose un poquito (1)
+    this.anims.create({
+      key: animKey('hug', 'hold'),
+      frames: this.anims.generateFrameNumbers('hug', { start: 0, end: 1 }),
+      frameRate: 2.5,
+      repeat: -1,
+    });
+
     this.scene.start('Welcome');
   }
 }

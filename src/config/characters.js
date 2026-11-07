@@ -60,6 +60,14 @@ export const CHARACTERS = [
     wanderRadius: 60,
     height: 17,
     tapEmote: 'sparkle',
-    animations: { walk: { frames: [2, 3, 4, 5], frameRate: 6, repeat: -1 } },
+    // Siesta ocasional: al terminar una pausa, con esta probabilidad se duerme
+    // en lugar de pasear (nunca durante un encuentro).
+    nap: { chance: 0.3, cooldownMs: 20000, durationMs: [4000, 7000] },
+    animations: {
+      walk: { frames: [2, 3, 4, 5], frameRate: 6, repeat: -1 },
+      // Fotogramas especiales (después de los 9 del contrato)
+      sleep: { frames: [8, 9], frameRate: 1.5, repeat: -1 },
+      wiggle: { frames: [2, 0, 4, 0], frameRate: 6, repeat: -1 },
+    },
   },
 ];

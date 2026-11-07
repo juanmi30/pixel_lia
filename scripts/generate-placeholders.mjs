@@ -157,7 +157,7 @@ function save(relPath, canvas) {
 {
   const pal = {
     o: hex('#7a2141'), R: hex('#ff5c8a'), W: hex('#ffd6e2'), N: hex('#6b4c9a'),
-    Y: hex('#ffd84d'), y: hex('#fff6c2'), r: hex('#ff7aa2'),
+    Y: hex('#ffd84d'), y: hex('#fff6c2'), r: hex('#ff7aa2'), Z: hex('#4d5590'),
   };
   const frames = [
     // 0 corazón
@@ -168,6 +168,8 @@ function save(relPath, canvas) {
     ['....Y....', '....Y....', '...YyY...', 'YYYyyyYYY', '...YyY...', '....Y....', '....Y....', '.........', '.........'],
     // 3 corazoncito
     ['.........', '.........', '..rr.rr..', '..rrrrr..', '...rrr...', '....r....', '.........', '.........', '.........'],
+    // 4 "z" de la siesta
+    ['.........', '.........', '..ZZZZZ..', '.....Z...', '....Z....', '...Z.....', '..ZZZZZ..', '.........', '.........'],
   ];
   const sheet = createCanvas(9 * frames.length, 9);
   frames.forEach((rows, i) => {

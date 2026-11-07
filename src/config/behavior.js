@@ -38,6 +38,30 @@ export const BEHAVIOR = {
     maxWidth: 104,
   },
 
+  /** Coreografías especiales de los encuentros (src/systems/specials.js). */
+  specials: {
+    hug: {
+      /** Espera tras encontrarse antes de abrazarse (se miran y saludan). */
+      startDelayMs: 350,
+      /** Cuánto dura el abrazo. */
+      holdMs: 2100,
+      /** Cada cuánto sale un corazoncito durante el abrazo. */
+      heartEveryMs: 420,
+    },
+    play: {
+      /** Saltitos de Miguelito y separación entre ellos. */
+      hops: 2,
+      hopGapMs: 380,
+      /** Cuánto se bambolea Ratencio en respuesta. */
+      wiggleMs: 1600,
+    },
+  },
+
+  nap: {
+    /** Cada cuánto sale una "z" mientras duerme. */
+    zzzEveryMs: 900,
+  },
+
   emote: {
     riseDistance: 16,
     durationMs: 1300,

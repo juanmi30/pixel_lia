@@ -11,6 +11,10 @@
  *   2-5  caminata: paso izquierdo, paso intermedio, paso derecho, paso intermedio
  *   6-7  reacción alegre
  *   8    parpadeo
+ *   9+   fotogramas especiales (Etapa 3): Ratencio dormido respirando
+ *
+ * Además genera hug.png: Miguel y Lía abrazados en una sola imagen (2 frames de
+ * 34×28), compuesta con su arte aprobado, para que cada uno rodee al otro.
  *
  * Reglas: píxeles enteros, sin suavizado, y los pies siempre apoyados en la
  * última fila del frame (el punto de apoyo del juego). El saltito al tocar lo
@@ -19,6 +23,8 @@
  * Escribe:
  *   public/assets/sprites/<id>.png         hojas que usa Phaser (9 frames en fila)
  *   docs/art/sprites/<id>-frames.png       los 9 fotogramas ampliados ×8
+ *   public/assets/sprites/hug.png          abrazo (2 frames)
+ *   docs/art/sprites/hug-frames.png        el abrazo ampliado ×8
  *   docs/art/sprites/animations-preview.gif   los cuatro en reposo, caminando y reaccionando
  */
 import { dirname, join } from 'node:path';
@@ -60,6 +66,10 @@ function lower(rows, from, to) {
 const compose = (rows, ...steps) => steps.reduce((acc, step) => step(acc), rows);
 const edits = (list) => (rows) => patch(rows, list);
 
+// Transformaciones para el abrazo (las rellenan los bloques de Miguel y Lía)
+let MIGUEL_HUG;
+let LIA_HUG;
+
 // ------------------------------------------------------------------ MIGUEL
 // Caminar tranquilo: pies alternos, balanceo de manos y un pequeño rebote de la
 // cabeza (que mueve el pelo) en los pasos intermedios. Reacción: ojos felices,
@@ -75,6 +85,10 @@ const MIGUEL = (() => {
   const blink = edits([[9, 6, 'SS'], [9, 12, 'SS']]);
   const handsUp1 = edits([[20, 4, 'SS'], [20, 14, 'SS'], [21, 4, 'CC'], [21, 14, 'CC']]);
   const handsUp2 = edits([[19, 4, 'SS'], [19, 14, 'SS'], [20, 4, 'CC'], [20, 14, 'CC'], [21, 4, 'CC'], [21, 14, 'CC']]);
+  // Abrazo: ojos felices, la mano derecha rodea a Lía (no se ve) y la cabeza
+  // se inclina 1 px hacia ella (mejilla con mejilla).
+  const tiltRight = (rows) => rows.map((r, i) => (i <= 14 ? '.' + r.slice(0, -1) : r));
+  MIGUEL_HUG = (squeeze) => compose(A, happyEyes, edits([[21, 14, 'CC']]), tiltRight, ...(squeeze ? [head] : []));
   return {
     id: 'miguel',
     palette: { ...miguelArt.PALETTE, B: hex('#e8806e') },
@@ -109,6 +123,7 @@ const LIA = (() => {
   // Puntas del pelo que se mecen en los pasos
   const hairSwayL = edits([[20, 2, '.OO'], [19, 1, 'OH']]);
   const hairSwayR = edits([[20, 15, 'OO.'], [19, 17, 'HO']]);
+  LIA_HUG = (squeeze) => compose(A, closedEyes, edits([[21, 5, 'J']]), ...(squeeze ? [head] : [])); // mano izquierda: rodea a Miguel
   return {
     id: 'lia',
     palette: liaArt.PALETTE,
@@ -193,7 +208,32 @@ function ratencioFrames() {
     r({ eyes: 'happy', blush: true }),
     r({ eyes: 'happy', blush: true, ...breathe }),
     r({ eyes: 'closed' }),
+    r({ eyes: 'closed', ...breathe }), // 9: dormido, respirando (siesta)
   ];
+}
+
+// ------------------------------------------------------------------ ABRAZO
+// Miguel a la izquierda y Lía a 14 px (un pasito más cerca que en un encuentro
+// normal). Lía se dibuja encima: apoya la cabeza en la mejilla de Miguel. Las
+// manos que rodean al otro asoman por el lado contrario, cada una con el tono
+// de piel de su dueño: la de Miguel sobre el hombro lejano de Lía y la de Lía
+// por la espalda de Miguel.
+const HUG_SPACING = 14;
+function hugFrames() {
+  const miguelPal = { ...miguelArt.PALETTE, B: hex('#e8806e') };
+  const frame = (squeeze) => {
+    const c = createCanvas(20 + HUG_SPACING, 28);
+    drawImage(c, fromAscii(MIGUEL_HUG(squeeze), miguelPal), 0, 0);
+    drawImage(c, fromAscii(LIA_HUG(squeeze), liaArt.PALETTE), HUG_SPACING, 0);
+    // Mano de Miguel sobre el hombro derecho de Lía, con su contorno
+    for (const [x, y] of [[28, 16], [29, 16], [28, 17], [29, 17]]) c.set(x, y, miguelArt.PALETTE.S);
+    for (const [x, y] of [[28, 15], [29, 15], [30, 16], [30, 17]]) c.set(x, y, miguelArt.PALETTE.O);
+    // Mano de Lía asomando por la espalda de Miguel, con su contorno
+    for (const [x, y] of [[2, 18], [3, 18], [2, 19], [3, 19]]) c.set(x, y, liaArt.PALETTE.S);
+    for (const [x, y] of [[1, 18], [1, 19], [2, 17], [2, 20]]) c.set(x, y, liaArt.PALETTE.O);
+    return c;
+  };
+  return [frame(false), frame(true)];
 }
 
 // ------------------------------------------------------------------ salida
@@ -238,6 +278,20 @@ for (const ch of CHARACTERS) {
   });
   writePNG(join(HERE, `${ch.id}-frames.png`), scaleNearest(board, 8));
   console.log(`${ch.id}: ${frames.length} fotogramas de ${w}×${h} → public/assets/sprites/${ch.id}.png`);
+}
+
+{
+  const frames = hugFrames();
+  const { w, h } = frames[0];
+  const sheet = createCanvas(w * frames.length, h);
+  frames.forEach((f, i) => drawImage(sheet, f, i * w, 0));
+  writePNG(join(SPRITES, 'hug.png'), sheet);
+  const pad = 2;
+  const board = createCanvas(frames.length * (w + pad) + pad, h + pad * 2 + 2, hex('#8dcf70'));
+  board.rect(0, h + pad, board.w, board.h - h - pad, hex('#7cc265'));
+  frames.forEach((f, i) => drawImage(board, f, pad + i * (w + pad), pad));
+  writePNG(join(HERE, 'hug-frames.png'), scaleNearest(board, 8));
+  console.log(`abrazo: ${frames.length} fotogramas de ${w}×${h} → public/assets/sprites/hug.png`);
 }
 
 // ------------------------------------------------------------------ GIF de vista previa

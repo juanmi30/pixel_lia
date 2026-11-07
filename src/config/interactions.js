@@ -14,6 +14,9 @@
  *   emoteCount cuántos emotes salen.
  *   durationMs cuánto dura el encuentro una vez juntos.
  *   cooldownMs tiempo mínimo antes de repetir esta misma interacción.
+ *   special   (opcional) coreografía especial al encontrarse, en lugar del
+ *             saludo genérico: 'hug' (abrazo de Miguel y Lía) o 'play'
+ *             (juego de Miguelito y Ratencio). Ver src/systems/specials.js.
  */
 export const INTERACTIONS = [
   {
@@ -22,9 +25,10 @@ export const INTERACTIONS = [
     target: 'lia',
     weight: 3,
     distance: 16,
-    emote: 'heart',
-    emoteCount: 3,
-    durationMs: 3200,
+    special: 'hug',
+    emote: 'miniHeart',
+    emoteCount: 1,
+    durationMs: 3600,
     cooldownMs: 20000,
   },
   {
@@ -33,9 +37,10 @@ export const INTERACTIONS = [
     target: 'miguel',
     weight: 3,
     distance: 16,
-    emote: 'heart',
-    emoteCount: 3,
-    durationMs: 3200,
+    special: 'hug',
+    emote: 'miniHeart',
+    emoteCount: 1,
+    durationMs: 3600,
     cooldownMs: 20000,
   },
   {
@@ -44,6 +49,7 @@ export const INTERACTIONS = [
     target: 'ratencio',
     weight: 3,
     distance: 18,
+    special: 'play',
     emote: 'note',
     emoteCount: 2,
     durationMs: 2800,
@@ -55,6 +61,7 @@ export const INTERACTIONS = [
     target: 'miguelito',
     weight: 2,
     distance: 18,
+    special: 'play',
     emote: 'sparkle',
     emoteCount: 2,
     durationMs: 2800,

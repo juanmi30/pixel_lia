@@ -23,31 +23,41 @@ El repositorio ya incluye `netlify.toml` (`npm run build`, carpeta `dist`, Node 
 ## Estructura
 
 ```
-public/assets/          Recursos visuales (se pueden sustituir sin tocar código)
+public/assets/          Recursos (se pueden sustituir sin tocar código)
   background/park.png   Fondo 320x180
-  sprites/*.png         Hojas de los personajes
+  sprites/*.png         Hojas de los personajes y del abrazo (hug.png)
   props/                Árbol, arbusto, banco, flores
-  fx/                   Emotes (corazón, nota, brillo…) y sombra
+  fx/                   Emotes (corazón, nota, brillo, "z"…) y sombra
+  audio/                Música de fondo
   fonts/                Pixelify Sans (licencia OFL)
 scripts/
-  generate-placeholders.mjs   Genera los sprites provisionales
+  generate-placeholders.mjs   Recursos provisionales del escenario
+docs/art/
+  prototypes/           Arte aprobado de los personajes (characters/*.mjs)
+  sprites/              Generador de las hojas animadas (npm run sprites) y vistas
+  interactions/         GIF y capturas de las interacciones especiales
 src/
   main.js               Arranque y configuración de Phaser
   config/               ← Todo lo ajustable está aquí
-    game.js             Resolución, título, fuente
-    assets.js           Rutas y tamaños de frame de cada imagen
-    characters.js       Personajes: velocidad, tiempos, animaciones
+    game.js             Resolución, título, fuente, volumen
+    assets.js           Rutas y tamaños de frame de cada recurso
+    characters.js       Personajes: velocidad, tiempos, animaciones, siesta
     dialogues.js        Todas las frases
-    interactions.js     Encuentros espontáneos entre personajes
+    interactions.js     Encuentros espontáneos (y su coreografía especial)
     behavior.js         Tiempos y parámetros generales
     world.js            Zona caminable, árboles, banco, flores
-  entities/Character.js        Estados idle / walking / interacting
+  entities/Character.js        Estados idle / walking / interacting / sleeping
   systems/World.js             Límites y obstáculos (lógica pura)
-  systems/InteractionDirector.js  Toques y encuentros espontáneos
+  systems/InteractionDirector.js  Toques, encuentros espontáneos y siesta
+  systems/specials.js          Coreografías: abrazo y juego de peluches
+  systems/Music.js             Música de fondo y silencio
   ui/SpeechBubbles.js          Globos de diálogo
+  ui/SoundToggle.js            Botón de sonido
   fx/Emotes.js                 Corazones y demás iconos
   scenes/BootScene.js          Carga de recursos y animaciones
+  scenes/WelcomeScene.js       Pantalla de bienvenida
   scenes/ParkScene.js          La escena del parque
+tests/                  Pruebas (npm test)
 ```
 
 El motor de interacciones (`Character`, `World`, `InteractionDirector`) no conoce ningún archivo de imagen: solo usa los nombres de textura definidos en `config/`.
@@ -80,8 +90,11 @@ El script (`docs/art/sprites/build-sprites.mjs`) define cada fotograma como un p
 | 2–5 | Caminar: paso, intermedio, paso, intermedio |
 | 6–7 | Reacción alegre (el saltito lo añade el juego) |
 | 8 | Parpadeo |
+| 9+ | Especiales (no forman parte del contrato): Ratencio dormido respirando |
 
 Los pies tocan siempre el borde inferior del frame, que es el punto de apoyo del juego.
+
+`public/assets/sprites/hug.png` es el abrazo de Miguel y Lía: los dos juntos en una sola imagen (2 frames de 34×28, Miguel a la izquierda; el juego la voltea si hace falta). También se genera con `npm run sprites` a partir de su arte aprobado.
 
 **Otro tamaño o número de frames:** cambia `frameWidth`/`frameHeight` en `config/assets.js`, los índices de `animations` en `config/characters.js` (o `DEFAULT_ANIMATIONS` para todos) y `height`. Si los personajes cambian de ancho, revisa `distance` en `config/interactions.js`.
 
@@ -113,6 +126,35 @@ Edita `src/config/dialogues.js`:
 - **En un encuentro:** agrega frases a `interactions.<id del encuentro>.actor` (quien se acerca) o `.target` (quien recibe).
 
 Se elige una frase al azar cada vez. Los globos duran más si la frase es más larga (`config/behavior.js → bubble`).
+
+## Interacciones especiales
+
+Tres momentos especiales, construidos sobre los encuentros y estados existentes:
+
+- **Abrazo de Miguel y Lía** (`special: 'hug'` en `interactions.js`). Se encuentran, se sonríen, dan un pasito el uno hacia el otro y se abrazan unos 2 s entre corazoncitos; luego se sueltan y siguen paseando.
+- **Miguelito juega con Ratencio** (`special: 'play'`). Miguelito da dos saltitos con notas musicales y Ratencio responde bamboleándose y soltando un brillito.
+- **Siesta de Ratencio** (`nap` en `characters.js`). A veces, en lugar de pasear, se duerme 4–7 s con "z" flotando y luego despierta solo. Si lo tocan, despierta y dice una frase de `dialogues.js → wake`. Nunca se duerme durante un encuentro, no queda reservado mientras duerme y no se le elige para encuentros dormido.
+
+Cómo están hechas:
+
+- Las coreografías viven en `src/systems/specials.js`. El `InteractionDirector` las llama cuando la pareja ya se encontró y se encarga de los diálogos, del final y de liberar a los personajes.
+- Todos los temporizadores del director se cancelan al terminar un encuentro y al cerrar la escena, así que no quedan llamadas pendientes ni personajes bloqueados.
+- Tiempos y probabilidades se ajustan en `config/behavior.js → specials / nap` y `config/characters.js → nap`.
+- Para añadir otra coreografía basta con escribir una función en `SPECIALS` y ponerle `special: '<nombre>'` a un encuentro.
+
+Evidencia: `docs/art/interactions/` (GIF y capturas de cada interacción). Para regenerarla, con `npm run dev` en marcha:
+
+```bash
+node docs/art/interactions/record-interactions.mjs
+```
+
+## Pruebas
+
+```bash
+npm test
+```
+
+Las pruebas usan el `Character` y el `InteractionDirector` reales con una escena falsa con reloj manual (`tests/helpers/fakeScene.js`), así que no necesitan navegador. Cubren el abrazo, el juego, la siesta, los toques durante cada uno, los fallos de camino, el cierre de la escena y la geometría del parque.
 
 ## Añadir un encuentro espontáneo
 

@@ -43,6 +43,11 @@ export const DIALOGUES = {
     ],
   },
 
+  /** Lo que dice un personaje al despertarlo de la siesta con un toque. */
+  wake: {
+    ratencio: ['¡Cinco minuticos más!', '*bosteza* ¿Ya es de día?', 'Estaba soñando con queso...'],
+  },
+
   interactions: {
     'miguel-busca-lia': {
       actor: ['Te encontré.', '¿Me das un abrazo?', 'Hola, preciosa.'],

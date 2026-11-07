@@ -1,32 +1,39 @@
-import Phaser from 'phaser';
 import { BEHAVIOR } from '../config/behavior.js';
-import { randomInRange } from '../utils/random.js';
 import { animKey, pixelCenterX } from '../utils/anims.js';
+import { Emitter } from '../utils/Emitter.js';
+import { randomInRange } from '../utils/random.js';
 
 export const STATE = Object.freeze({
   IDLE: 'idle',
   WALKING: 'walking',
   INTERACTING: 'interacting',
+  SLEEPING: 'sleeping',
 });
+
+/** Zona táctil rectangular (sin depender de Phaser.Geom). */
+const containsPoint = (area, x, y) => x >= area.x && y >= area.y && x < area.x + area.width && y < area.y + area.height;
 
 /**
  * Un habitante del parque.
  *
  * La lógica (posición, estado, temporizadores) se guarda en el propio objeto;
  * el sprite solo refleja ese estado en syncView(). Por eso cambiar el arte no
- * afecta al comportamiento.
+ * afecta al comportamiento, y la lógica puede probarse sin Phaser (`npm test`).
  *
  * Estados:
- *   idle        quieto; tras un tiempo aleatorio elige un destino y pasea.
+ *   idle        quieto; tras un tiempo aleatorio pasea (o, si tiene `nap`, a veces se duerme).
  *   walking     camina en línea recta hacia un destino.
  *   interacting reacciona (al tocarlo o en un encuentro) y no se mueve.
+ *   sleeping    siesta: no pasea ni participa en encuentros; se despierta solo o al tocarlo.
  *
  * `reserved` indica que el director de interacciones lo está usando: mientras
- * esté reservado no pasea por su cuenta.
+ * esté reservado no pasea ni se duerme.
+ * `posing` indica que una acción especial (p. ej. el abrazo) controla su
+ * imagen: se oculta su sprite y el saltito del toque se omite.
  *
- * Emite: 'tap' (character) cuando lo tocan o hacen clic.
+ * Emite: 'tap' (character), 'sleep' (character), 'wake' (character, byTap).
  */
-export class Character extends Phaser.Events.EventEmitter {
+export class Character extends Emitter {
   constructor(scene, def, world) {
     super();
     this.scene = scene;
@@ -40,12 +47,17 @@ export class Character extends Phaser.Events.EventEmitter {
     this.y = start.y;
     this.hopOffset = 0;
     this.reserved = false;
+    this.posing = false;
 
     this.state = null;
     this.stateTime = 0;
     this.waitMs = 0;
     this.destination = null;
     this.onArrive = null;
+
+    /** Reloj propio (ms) para las reglas de siesta. */
+    this.elapsed = 0;
+    this.lastNapEnd = -Infinity;
 
     this.shadow = scene.add.image(0, 0, 'shadow').setDepth(1);
     this.sprite = scene.add.sprite(0, 0, def.texture, 0);
@@ -54,8 +66,8 @@ export class Character extends Phaser.Events.EventEmitter {
     // Zona táctil algo mayor que el sprite: más fácil de tocar en el celular.
     const pad = 4;
     this.sprite.setInteractive({
-      hitArea: new Phaser.Geom.Rectangle(-pad, -pad, this.sprite.width + pad * 2, this.sprite.height + pad * 2),
-      hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+      hitArea: { x: -pad, y: -pad, width: this.sprite.width + pad * 2, height: this.sprite.height + pad * 2 },
+      hitAreaCallback: containsPoint,
       useHandCursor: true,
     });
     // El toque lo decide la escena (ParkScene.handlePointerDown): cuando varias
@@ -83,7 +95,11 @@ export class Character extends Phaser.Events.EventEmitter {
 
   /** Libre = puede participar en una interacción espontánea. */
   isFree() {
-    return !this.reserved && this.state !== STATE.INTERACTING;
+    return !this.reserved && this.state !== STATE.INTERACTING && this.state !== STATE.SLEEPING;
+  }
+
+  isSleeping() {
+    return this.state === STATE.SLEEPING;
   }
 
   reserve() {
@@ -92,7 +108,18 @@ export class Character extends Phaser.Events.EventEmitter {
 
   release() {
     this.reserved = false;
+    this.setPosing(false);
     if (this.state !== STATE.WALKING) this.idle();
+  }
+
+  /**
+   * Cede (o recupera) su imagen a una acción especial. Mientras posa, su sprite
+   * se oculta pero sigue recibiendo toques.
+   */
+  setPosing(posing) {
+    this.posing = posing;
+    this.sprite.setVisible(!posing);
+    if (this.sprite.input) this.sprite.input.alwaysEnabled = posing;
   }
 
   // ---------------------------------------------------------------- estados
@@ -113,8 +140,13 @@ export class Character extends Phaser.Events.EventEmitter {
 
   /** Reacción durante `durationMs` (animación "react"); luego vuelve a idle. */
   interact(durationMs) {
+    this.perform('react', durationMs);
+  }
+
+  /** Reproduce una animación propia durante `durationMs` sin moverse; luego vuelve a idle. */
+  perform(animName, durationMs) {
     this.setState(STATE.INTERACTING, durationMs);
-    this.play('react');
+    this.play(animName);
   }
 
   /** Se queda quieto indefinidamente (hasta release()). */
@@ -123,9 +155,33 @@ export class Character extends Phaser.Events.EventEmitter {
     this.play('idle');
   }
 
+  /** Siesta durante `durationMs` (solo si el personaje tiene configuración `nap`). */
+  sleep(durationMs = randomInRange(this.def.nap.durationMs)) {
+    this.setState(STATE.SLEEPING, durationMs);
+    this.play('sleep');
+    this.emit('sleep', this);
+  }
+
+  /** Despierta de la siesta. Devuelve false si no estaba dormido. */
+  wake(byTap = false) {
+    if (this.state !== STATE.SLEEPING) return false;
+    this.lastNapEnd = this.elapsed;
+    this.idle();
+    this.emit('wake', this, byTap);
+    return true;
+  }
+
+  /** ¿Toca dormir ahora? Solo libre de encuentros, con su probabilidad y respetando la pausa entre siestas. */
+  wantsNap() {
+    const nap = this.def.nap;
+    if (!nap || this.reserved) return false;
+    if (this.elapsed - this.lastNapEnd < nap.cooldownMs) return false;
+    return Math.random() < nap.chance;
+  }
+
   /** Reacción al toque: saltito y, si no está ocupado, se detiene un momento. */
   reactToTap() {
-    this.hop();
+    if (!this.posing) this.hop();
     if (!this.reserved) this.interact(BEHAVIOR.tap.pauseMs);
   }
 
@@ -150,17 +206,24 @@ export class Character extends Phaser.Events.EventEmitter {
   // ---------------------------------------------------------------- ciclo
 
   update(delta) {
+    this.elapsed += delta;
     this.stateTime += delta;
 
     switch (this.state) {
       case STATE.IDLE:
-        if (!this.reserved && this.stateTime >= this.waitMs) this.wander();
+        if (!this.reserved && this.stateTime >= this.waitMs) {
+          if (this.wantsNap()) this.sleep();
+          else this.wander();
+        }
         break;
       case STATE.WALKING:
         this.step(delta);
         break;
       case STATE.INTERACTING:
         if (this.stateTime >= this.waitMs) this.idle();
+        break;
+      case STATE.SLEEPING:
+        if (this.stateTime >= this.waitMs) this.wake(false);
         break;
     }
 

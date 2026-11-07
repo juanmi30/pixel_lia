@@ -74,14 +74,17 @@ export class World {
    * Punto junto a `target` (a izquierda o derecha, a `distance` px) para que
    * alguien que viene desde `from` se coloque a su lado.
    *
-   * Solo devuelve puntos caminables Y alcanzables en línea recta desde `from`.
-   * Si ningún lado cumple ambas condiciones devuelve null y el encuentro se cancela.
+   * Solo devuelve puntos caminables Y alcanzables en línea recta desde `from`,
+   * y (si se indica) a más de `clearance` px de cada punto de `avoid` (otros
+   * personajes), para que el encuentro no quede encima de un tercero.
+   * Si ningún lado cumple las condiciones devuelve null y el encuentro se cancela.
    */
-  meetingPoint(target, from, distance) {
+  meetingPoint(target, from, distance, avoid = [], clearance = 0) {
     const preferred = Math.sign(from.x - target.x) || 1;
     for (const side of [preferred, -preferred]) {
       const p = { x: target.x + side * distance, y: target.y };
-      if (this.isWalkable(p.x, p.y) && this.isPathClear(from, p)) return p;
+      const crowded = avoid.some((o) => Math.hypot(o.x - p.x, o.y - p.y) < clearance);
+      if (!crowded && this.isWalkable(p.x, p.y) && this.isPathClear(from, p)) return p;
     }
     return null;
   }
