@@ -8,6 +8,13 @@
 export const ASSETS = {
   font: { key: 'Pixelify Sans', url: 'assets/fonts/pixelify-sans.woff2', format: 'woff2' },
 
+  // Música de fondo. Se pueden listar varios formatos (p. ej. .ogg y .m4a) y
+  // Phaser elige el primero que el navegador sepa reproducir.
+  // Si el archivo no existe, el juego funciona igual, sin música.
+  audio: {
+    music: ['assets/audio/nuestro-lugarcito-musica-optimizada.mp3'],
+  },
+
   images: {
     park: 'assets/background/park.png',
     bench: 'assets/props/bench.png',

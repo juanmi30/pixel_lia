@@ -8,14 +8,16 @@
  *
  *   miguel-prototype.png              20×28
  *   lia-prototype-v2.png              20×28
- *   miguelito-prototype.png           18×20
+ *   miguelito-prototype-v2.png        20×20 (v2, a partir de la foto del peluche)
  *   ratencio-prototype-v2.png         22×20
  *   all-characters-comparison.png     provisionales (arriba) y prototipos (abajo), ×8
  *   all-characters-park-preview.png   el parque actual con los cuatro prototipos, ×4
+ *   miguelito-comparison.png          Miguelito v1 (sin foto) junto a v2, ×8
+ *   miguelito-park-preview.png        detalle del parque alrededor de Miguelito v2, ×6
  *
  * No modifica nada del juego: solo lee el fondo, los props y los sprites provisionales.
- * (lia-prototype.png y ratencio-prototype.png son los v1 de la Etapa 2A y se
- * conservan como referencia.)
+ * (lia-prototype.png, ratencio-prototype.png y miguelito-prototype.png son
+ * versiones anteriores y se conservan como referencia; no se regeneran.)
  */
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -42,7 +44,7 @@ const proto = {
 const FILES = {
   miguel: 'miguel-prototype.png',
   lia: 'lia-prototype-v2.png',
-  miguelito: 'miguelito-prototype.png',
+  miguelito: 'miguelito-prototype-v2.png',
   ratencio: 'ratencio-prototype-v2.png',
 };
 for (const id of ORDER) writePNG(join(HERE, FILES[id]), proto[id]);
@@ -101,7 +103,7 @@ function renderPark(cast) {
   drawables.sort((a, b) => a.y - b.y);
   // Origen como en el juego: centro horizontal en píxel entero, pies en la base
   for (const d of drawables) drawImage(scene, d.img, d.x - Math.floor(d.img.w / 2), d.y - d.img.h);
-  return scaleNearest(scene, 4);
+  return scene;
 }
 
 // Escena típica: la pareja junta en el camino (separados 16 px, como quedarían en
@@ -112,9 +114,26 @@ const POSITIONS = {
   miguelito: { x: 128, y: 92 },
   ratencio: { x: 188, y: 94 },
 };
-writePNG(
-  join(HERE, 'all-characters-park-preview.png'),
-  renderPark(ORDER.map((id) => ({ ...POSITIONS[id], img: proto[id] }))),
-);
+const park = renderPark(ORDER.map((id) => ({ ...POSITIONS[id], img: proto[id] })));
+writePNG(join(HERE, 'all-characters-park-preview.png'), scaleNearest(park, 4));
+
+// ---------------------------------------------------------------- Miguelito v1 / v2
+{
+  const v1 = readPNG(join(HERE, 'miguelito-prototype.png'));
+  const v2 = proto.miguelito;
+  const pad = 4;
+  const gap = 8;
+  const h = Math.max(v1.h, v2.h) + pad * 2;
+  const w = pad * 2 + v1.w + gap + v2.w;
+  const board = createCanvas(w, h, hex('#8dcf70'));
+  board.rect(0, h - pad, w, pad, hex('#7cc265'));
+  drawImage(board, v1, pad, h - pad - v1.h);
+  drawImage(board, v2, pad + v1.w + gap, h - pad - v2.h);
+  writePNG(join(HERE, 'miguelito-comparison.png'), scaleNearest(board, 8));
+
+  // Detalle del parque: Miguelito entre Miguel y Ratencio, a escala de juego ×6
+  const { x, y } = POSITIONS.miguelito;
+  writePNG(join(HERE, 'miguelito-park-preview.png'), scaleNearest(crop(park, x - 40, y - 34, 112, 66), 6));
+}
 
 console.log(ORDER.map((id) => `${id} ${proto[id].w}×${proto[id].h}`).join(', '), '→', HERE);

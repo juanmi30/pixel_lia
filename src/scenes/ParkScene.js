@@ -6,7 +6,9 @@ import { Character } from '../entities/Character.js';
 import { Emotes } from '../fx/Emotes.js';
 import { InteractionDirector } from '../systems/InteractionDirector.js';
 import { World } from '../systems/World.js';
+import { SoundToggle } from '../ui/SoundToggle.js';
 import { SpeechBubbles } from '../ui/SpeechBubbles.js';
+import { Music } from '../systems/Music.js';
 import { animKey, pixelCenterX } from '../utils/anims.js';
 import { randomBetween } from '../utils/random.js';
 
@@ -42,6 +44,9 @@ export class ParkScene extends Phaser.Scene {
     this.input.on('pointerdown', this.handlePointerDown, this);
 
     this.showIntro();
+
+    // Botón discreto de sonido, arriba a la derecha (fuera de la zona caminable)
+    if (Music.isAvailable(this)) this.soundToggle = new SoundToggle(this, GAME.width - 19, 4);
   }
 
   /**

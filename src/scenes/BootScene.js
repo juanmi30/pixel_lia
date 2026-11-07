@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ASSETS, FLOWER_VARIANTS } from '../config/assets.js';
 import { CHARACTERS, DEFAULT_ANIMATIONS } from '../config/characters.js';
+import { MUSIC_KEY } from '../systems/Music.js';
 import { animKey } from '../utils/anims.js';
 
 /** Carga todos los recursos del manifiesto y registra las animaciones. */
@@ -10,8 +11,9 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    const { font, images, spritesheets } = ASSETS;
+    const { font, audio, images, spritesheets } = ASSETS;
     this.load.font(font.key, font.url, font.format);
+    this.load.audio(MUSIC_KEY, audio.music);
     for (const [key, url] of Object.entries(images)) this.load.image(key, url);
     for (const [key, { url, frameWidth, frameHeight }] of Object.entries(spritesheets)) {
       this.load.spritesheet(key, url, { frameWidth, frameHeight });
@@ -41,6 +43,6 @@ export class BootScene extends Phaser.Scene {
       });
     }
 
-    this.scene.start('Park');
+    this.scene.start('Welcome');
   }
 }

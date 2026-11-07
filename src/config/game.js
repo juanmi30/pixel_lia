@@ -15,9 +15,17 @@ export const GAME = {
   maxPixelScale: 6,
   backgroundColor: '#2b2235',
   fontFamily: 'Pixelify Sans',
-  /** Mensaje de bienvenida que aparece unos segundos al iniciar. */
+  /** Mensaje que aparece unos segundos al entrar al parque. */
   intro: {
     subtitle: 'Toca a alguien para saludar',
     holdMs: 4500,
+  },
+  /** Pantalla de bienvenida (necesaria para iniciar el audio tras un gesto del usuario). */
+  welcome: {
+    button: 'Entrar a nuestro lugarcito',
+  },
+  audio: {
+    /** Volumen de la música (0 a 1). */
+    musicVolume: 0.25,
   },
 };

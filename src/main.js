@@ -3,6 +3,7 @@ import './style.css';
 import { GAME } from './config/game.js';
 import { BootScene } from './scenes/BootScene.js';
 import { ParkScene } from './scenes/ParkScene.js';
+import { WelcomeScene } from './scenes/WelcomeScene.js';
 
 /**
  * Elige un factor de ampliación entero según el tamaño de la pantalla y la
@@ -30,11 +31,10 @@ const game = new Phaser.Game({
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
   input: { activePointers: 2 },
-  audio: { noAudio: true }, // de momento no hay sonido
   callbacks: {
     preBoot: (game) => game.registry.set('pixelScale', pixelScale),
   },
-  scene: [BootScene, ParkScene],
+  scene: [BootScene, WelcomeScene, ParkScene],
 });
 
 // Solo en desarrollo: acceso desde la consola del navegador para depurar.

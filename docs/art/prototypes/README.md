@@ -8,10 +8,12 @@ Sprites **estáticos** para validar la identidad visual antes de animar. El jueg
 |---|---|
 | `miguel-prototype.png` | Miguel, frame 20×28 (28 px dibujados) |
 | `lia-prototype-v2.png` | Lía, frame 20×28 (27 px dibujados) |
-| `miguelito-prototype.png` | Miguelito, frame 18×20 |
+| `miguelito-prototype-v2.png` | Miguelito v2, frame 20×20 (Etapa 2C, a partir de su foto) |
 | `ratencio-prototype-v2.png` | Ratencio, frame 22×20 (17 px dibujados) |
 | `all-characters-comparison.png` | Provisionales (arriba) y prototipos (abajo) sobre la misma línea de suelo, ×8 |
 | `all-characters-park-preview.png` | El parque actual con los cuatro prototipos, ×4 |
+| `miguelito-comparison.png` | Miguelito v1 (sin foto) y v2, ×8 |
+| `miguelito-park-preview.png` | Detalle del parque alrededor de Miguelito v2, ×6 |
 
 Todos tienen fondo transparente, sin píxeles semitransparentes, y los pies en la última fila del frame (el punto de apoyo del juego). Las ampliaciones usan vecino más cercano.
 
@@ -38,7 +40,16 @@ El arte de cada personaje está en `characters/<id>.mjs`, con su paleta (`PALETT
 - Ojos oscuros y sonrisa abierta, como en la foto.
 - Hoodie negro frío con cordones (no se confunde con el pelo) y jeans azules. Complexión delgada.
 
-**Miguelito.** Todavía **sin foto de referencia**: está hecho a partir de la descripción.
+**Miguelito v2 (Etapa 2C).** Rehecho a partir de su foto:
+- Pelaje café rojizo oscuro.
+- Antifaz beige en forma de corazón, con un pico de pelo en la frente.
+- **Hocico enorme** que forma la mitad inferior de la cabeza, con naricita y sonrisa ancha de lado a lado.
+- **Orejas beige grandes y redondas** a la altura de los ojos.
+- Brazos largos con **manos grandes** junto a los pies.
+
+Pasa a 20×20 para que quepan las orejas. El aro café rojizo de los ojos del peluche no cabe en ojos de 2 px: se probó debajo (parecían ojeras) y al lado (deformaba los ojos), y se descartó.
+
+**Miguelito v1 (histórico, sin foto).**
 - Café oscuro, con antifaz beige y ojos negros grandes con brillo.
 - Hocico beige más claro, que sobresale, con naricita y sonrisa.
 - Orejas redondas a los lados; manos, barriga y pies beige; cuerpo rechoncho.
@@ -53,7 +64,7 @@ El arte de cada personaje está en `characters/<id>.mjs`, con su paleta (`PALETT
 
 ### Para integrar más adelante (no en esta etapa)
 
-- `src/config/assets.js`: `frameWidth`/`frameHeight` de 20×28 (humanos), 18×20 (Miguelito) y 22×20 (Ratencio).
+- `src/config/assets.js`: `frameWidth`/`frameHeight` de 20×28 (humanos), 20×20 (Miguelito) y 22×20 (Ratencio).
 - `src/config/characters.js`: `height` de 28 para Miguel, 27 para Lía, 20 para Miguelito y 17 para Ratencio.
 - `src/config/interactions.js`: `distance` de unos 15 en los encuentros de Miguel y Lía.
 
@@ -61,4 +72,4 @@ Se mantienen los 9 frames por hoja y el volteo horizontal.
 
 ## Etapa 2A (histórico)
 
-`lia-prototype.png`, `ratencio-prototype.png`, `comparison.png`, `park-preview.png` y `park-preview-before.png` son los primeros prototipos. Se conservan como referencia y el script actual ya no los regenera.
+`lia-prototype.png`, `ratencio-prototype.png`, `comparison.png`, `park-preview.png`, `park-preview-before.png` y `miguelito-prototype.png` (v1) son versiones anteriores. Se conservan como referencia y el script actual ya no los regenera.

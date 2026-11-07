@@ -112,6 +112,16 @@ En `src/config/interactions.js` agrega una entrada, por ejemplo:
 
 y sus frases en `dialogues.js → interactions['ratencio-busca-lia']`.
 
+## Música
+
+El juego empieza en una pantalla de bienvenida. La música solo suena después de tocar **"Entrar a nuestro lugarcito"**, porque los navegadores bloquean el audio que empieza solo. Se repite en bucle al 25 % de volumen y el botón de arriba a la derecha la silencia o reactiva. La preferencia se recuerda en el navegador.
+
+- Archivo: `public/assets/audio/nuestro-lugarcito-musica-optimizada.mp3` (MP3 de 160 kbps, unos 108,7 s, recortado sin silencios).
+- Ruta: `src/config/assets.js → audio.music`. Admite varios formatos en la lista, por ejemplo `.ogg` y `.mp3`, y Phaser usa el primero que el navegador pueda reproducir.
+- Volumen: `src/config/game.js → audio.musicVolume`.
+- Si el archivo falta, el juego funciona igual, sin música y sin el botón de sonido.
+- Los originales pesados (WAV) se guardan fuera de `public/`; `docs/art/*.wav` y `docs/art/*.mp3` están en `.gitignore`.
+
 ## Ajustar el comportamiento
 
 - Velocidad, pausas entre paseos y radio de paseo de cada uno: `config/characters.js`.

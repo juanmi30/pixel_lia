@@ -5,3 +5,7 @@ dist/
 
 # Fotos de referencia privadas: nunca se suben al repositorio
 docs/art/references/
+
+# Audio de trabajo (el que usa el juego está en public/assets/audio/)
+docs/art/*.wav
+docs/art/*.mp3
