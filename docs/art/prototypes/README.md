@@ -1,58 +1,64 @@
-# Prototipos de personajes — Etapa 2A
+# Prototipos de personajes
 
-Sprites **estáticos** de prueba para validar el parecido antes de animar. No los usa el juego: los sprites de `public/assets/sprites/` siguen siendo los provisionales.
+Sprites **estáticos** para validar la identidad visual antes de animar. El juego no los usa: los sprites de `public/assets/sprites/` siguen siendo los provisionales.
+
+## Etapa 2B (vigente)
 
 | Archivo | Contenido |
 |---|---|
-| `lia-prototype.png` | Lía, 20×28, fondo transparente |
-| `ratencio-prototype.png` | Ratencio, 22×20, fondo transparente |
-| `comparison.png` | Provisional y prototipo sobre la misma línea de suelo, ×8 (vecino más cercano) |
-| `park-preview.png` | El parque actual con los prototipos, ×4 |
-| `park-preview-before.png` | El mismo encuadre con los sprites provisionales, ×4 |
+| `miguel-prototype.png` | Miguel, frame 20×28 (28 px dibujados) |
+| `lia-prototype-v2.png` | Lía, frame 20×28 (27 px dibujados) |
+| `miguelito-prototype.png` | Miguelito, frame 18×20 |
+| `ratencio-prototype-v2.png` | Ratencio, frame 22×20 (17 px dibujados) |
+| `all-characters-comparison.png` | Provisionales (arriba) y prototipos (abajo) sobre la misma línea de suelo, ×8 |
+| `all-characters-park-preview.png` | El parque actual con los cuatro prototipos, ×4 |
 
-Para regenerarlos:
+Todos tienen fondo transparente, sin píxeles semitransparentes, y los pies en la última fila del frame (el punto de apoyo del juego). Las ampliaciones usan vecino más cercano.
 
 ```bash
 node docs/art/prototypes/build-prototypes.mjs
 ```
 
-El arte está en `build-prototypes.mjs`: Lía en ASCII con su paleta, y Ratencio con formas (huevo, barriga, orejas) más detalles a mano. Para retocar un color basta con cambiar su valor en la paleta.
+El arte de cada personaje está en `characters/<id>.mjs`, con su paleta (`PALETTE`) y su dibujo: ASCII (`ART`) o, en Ratencio, la forma calculada (`SHAPE`) más los detalles a mano. Para cambiar un color basta con editar su valor en la paleta.
 
-## Rasgos conservados
+### Cambios y decisiones
 
-**Lía**
-- Piel tostada cálida (`#c68a62`), con la sombra del mismo tono en cuello y mentón y las manos del mismo color que la cara.
-- Pelo negro cálido, liso y largo, con raya casi al centro y sin flequillo. Cae por delante de los hombros y tiene un brillo sutil.
-- Ojos grandes (2×3) con iris café oscuro, brillo y **delineado con colita** hacia arriba en la esquina exterior, su rasgo más reconocible en las fotos.
-- Rubor en las mejillas y sonrisa pequeña.
-- Blusa rosada, chaqueta negra abierta, pantalón oscuro.
+**Lía v2.** Solo cambia la chaqueta: pasa a un negro azulado (`#3e3b52`) algo más claro y frío que el pelo, que sigue siendo negro cálido (`#2a1f24`), con un filo de luz (`#5c5878`) en el borde que toca el pelo. Rostro y piel sin cambios.
 
-**Ratencio**
-- Silueta de **pera o huevo**, como el peluche real (estrecho arriba, ancho abajo), en lugar de la bola ancha del concepto.
-- Ojos cerrados en arco (adormilado), naricita y rubor rosados.
-- Orejitas redondas pequeñas con el interior café.
-- **Gran círculo rosado en la barriga**, bracitos cortos, patitas mínimas y cola fina curvada.
+**Ratencio v2.** Se revisó la foto del peluche para que no se parezca a un gato:
+- Cúpula redondeada arriba y cuerpo de pera, sin cuello.
+- Orejas pequeñas y redondas a los costados de la cabeza (en la v1 estaban en las esquinas).
+- Ojos pequeños y tranquilos con la esquina caída, en vez de la "v" felina.
+- El rosado es ahora el **gran óvalo del hocico**, justo debajo de los ojos, con la naricita arriba y un brillo suave. Ya no es una barriga aparte.
+- Patitas diminutas. La cola no se ve de frente: una puntita suelta parecía un guion despegado. Su color se guarda para las vistas de perfil.
 
-## Coherencia con el concepto
+**Miguel.**
+- Piel clara cálida (`#f0c6a0`), claramente distinta de la de Lía.
+- Pelo castaño muy oscuro con volumen, mechones con luz y flequillo irregular.
+- Ojos oscuros y sonrisa abierta, como en la foto.
+- Hoodie negro frío con cordones (no se confunde con el pelo) y jeans azules. Complexión delgada.
 
-- Mantiene la proporción chibi (la cabeza ocupa cerca de la mitad de Lía), el contorno oscuro de 1 px, de 2 a 3 tonos por material y la paleta cálida del parque.
-- El concepto está dibujado a más resolución de la que permite el juego (personajes de unos 40 px). A 20×28 se conservan la silueta, los colores y los rasgos clave, pero no detalles finos como mechones o pestañas individuales.
-- Diferencias intencionadas con el concepto, para respetar las fotos: Lía sin flequillo y con ojos abiertos y delineados; Ratencio con forma de pera.
+**Miguelito.** Todavía **sin foto de referencia**: está hecho a partir de la descripción.
+- Café oscuro, con antifaz beige y ojos negros grandes con brillo.
+- Hocico beige más claro, que sobresale, con naricita y sonrisa.
+- Orejas redondas a los lados; manos, barriga y pies beige; cuerpo rechoncho.
 
-## Recomendación de dimensiones
+### Validación conjunta
 
-| Personaje | Frame | Motivo |
-|---|---|---|
-| Lía | 20×28 | Validado: los ojos con delineado y el pelo largo se leen bien a escala de juego |
-| Miguel | 20×28 | Misma base que Lía para que se vean como pareja; el volumen del pelo cabe en las 2–3 filas superiores |
-| Miguelito | 18×20 | Peluche, más bajo que los humanos; necesita ancho para las orejas |
-| Ratencio | 22×20 | Validado: 71 % de la altura de Lía, ancho extra para la cola |
+1. **Miguel y Lía comparten escala:** misma cabeza, piernas y línea de suelo. Miguel es 1 px más alto por el volumen del pelo.
+2. **Pieles y rasgos distinguibles:** clara cálida frente a tostada; pelo despeinado con flequillo frente a liso con raya; sonrisa abierta frente a delineado y rubor.
+3. **Peluches:** formas redondeadas, sin anatomía realista, y más bajos que los humanos (unos 70 %).
+4. **Estilo común:** contorno oscuro de 1 px, 2 o 3 tonos por material, entre 10 y 17 colores por personaje y paleta cálida.
+5. **Proporciones:** frente a los árboles (44 px) y el banco, ninguno queda desproporcionado.
 
-Cuando se integren (en la siguiente etapa, no ahora) habrá que ajustar solo la configuración:
+### Para integrar más adelante (no en esta etapa)
 
-- `frameWidth` y `frameHeight` en `src/config/assets.js`.
-- `height` de cada personaje en `src/config/characters.js` (27 para los humanos, 17 para Ratencio).
-- `distance` en `src/config/interactions.js`: subir de 11 a unos 15 para que Miguel y Lía no se monten al encontrarse.
-- Opcional: una sombra algo más ancha (`fx/shadow.png`).
+- `src/config/assets.js`: `frameWidth`/`frameHeight` de 20×28 (humanos), 18×20 (Miguelito) y 22×20 (Ratencio).
+- `src/config/characters.js`: `height` de 28 para Miguel, 27 para Lía, 20 para Miguelito y 17 para Ratencio.
+- `src/config/interactions.js`: `distance` de unos 15 en los encuentros de Miguel y Lía.
 
-El formato de 9 frames y el volteo horizontal se mantienen.
+Se mantienen los 9 frames por hoja y el volteo horizontal.
+
+## Etapa 2A (histórico)
+
+`lia-prototype.png`, `ratencio-prototype.png`, `comparison.png`, `park-preview.png` y `park-preview-before.png` son los primeros prototipos. Se conservan como referencia y el script actual ya no los regenera.
