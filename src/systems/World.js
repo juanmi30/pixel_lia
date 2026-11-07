@@ -73,14 +73,16 @@ export class World {
   /**
    * Punto junto a `target` (a izquierda o derecha, a `distance` px) para que
    * alguien que viene desde `from` se coloque a su lado.
+   *
+   * Solo devuelve puntos caminables Y alcanzables en línea recta desde `from`.
+   * Si ningún lado cumple ambas condiciones devuelve null y el encuentro se cancela.
    */
   meetingPoint(target, from, distance) {
     const preferred = Math.sign(from.x - target.x) || 1;
-    const candidates = [preferred, -preferred].map((side) => ({
-      x: target.x + side * distance,
-      y: target.y,
-    }));
-    const valid = candidates.filter((p) => this.isWalkable(p.x, p.y));
-    return valid.find((p) => this.isPathClear(from, p)) ?? valid[0] ?? null;
+    for (const side of [preferred, -preferred]) {
+      const p = { x: target.x + side * distance, y: target.y };
+      if (this.isWalkable(p.x, p.y) && this.isPathClear(from, p)) return p;
+    }
+    return null;
   }
 }

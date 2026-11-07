@@ -13,6 +13,7 @@ npm install       # instala dependencias
 npm run dev       # servidor de desarrollo → http://localhost:5173
 npm run build     # versión final en dist/
 npm run preview   # sirve dist/ localmente para revisarla
+npm test          # pruebas de la lógica del mundo (node --test, sin dependencias)
 ```
 
 ### Publicar en Netlify

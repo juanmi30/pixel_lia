@@ -37,7 +37,30 @@ export class ParkScene extends Phaser.Scene {
     });
     this.director.start();
 
+    // Recibe todos los objetos bajo el puntero, no solo el de encima.
+    this.input.topOnly = false;
+    this.input.on('pointerdown', this.handlePointerDown, this);
+
     this.showIntro();
+  }
+
+  /**
+   * Cuando dos personajes están juntos sus zonas táctiles se solapan; se elige
+   * el que tenga el centro más cerca del punto tocado.
+   */
+  handlePointerDown(pointer, objectsUnderPointer) {
+    let nearest = null;
+    let best = Infinity;
+    for (const object of objectsUnderPointer) {
+      const character = object.getData?.('character');
+      if (!character) continue;
+      const d = character.distanceSqTo(pointer.worldX, pointer.worldY);
+      if (d < best) {
+        best = d;
+        nearest = character;
+      }
+    }
+    nearest?.tap();
   }
 
   update(_time, delta) {

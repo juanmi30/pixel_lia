@@ -58,7 +58,9 @@ export class Character extends Phaser.Events.EventEmitter {
       hitAreaCallback: Phaser.Geom.Rectangle.Contains,
       useHandCursor: true,
     });
-    this.sprite.on('pointerdown', () => this.emit('tap', this));
+    // El toque lo decide la escena (ParkScene.handlePointerDown): cuando varias
+    // zonas táctiles se solapan, elige al personaje más cercano al dedo.
+    this.sprite.setData('character', this);
 
     this.idle(randomInRange([300, 2500]));
     this.syncView();
@@ -67,6 +69,16 @@ export class Character extends Phaser.Events.EventEmitter {
   /** Coordenada y de la parte superior visible (para globos y emotes). */
   get top() {
     return this.y + this.hopOffset - this.def.height;
+  }
+
+  /** Distancia (al cuadrado) entre un punto y el centro visible del personaje. */
+  distanceSqTo(x, y) {
+    return (x - this.x) ** 2 + (y - (this.y - this.def.height / 2)) ** 2;
+  }
+
+  /** Notifica que lo han tocado o le han hecho clic. */
+  tap() {
+    this.emit('tap', this);
   }
 
   /** Libre = puede participar en una interacción espontánea. */
