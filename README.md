@@ -52,27 +52,42 @@ src/
 
 El motor de interacciones (`Character`, `World`, `InteractionDirector`) no conoce ningún archivo de imagen: solo usa los nombres de textura definidos en `config/`.
 
-## Reemplazar sprites
+## Personajes y sprites
 
-Los sprites actuales son **provisionales** y genéricos. Para poner el arte definitivo, sustituye el PNG manteniendo su formato (o cambia ruta y tamaño en `src/config/assets.js`).
+Los cuatro personajes son definitivos. Su arte aprobado está en `docs/art/prototypes/characters/<id>.mjs` (paleta y dibujo), y las hojas animadas se generan a partir de él:
+
+```bash
+npm run sprites   # escribe public/assets/sprites/*.png y las vistas de docs/art/sprites/
+```
+
+El script (`docs/art/sprites/build-sprites.mjs`) define cada fotograma como un pequeño cambio sobre el reposo y comprueba al generar que el fotograma 0 sea idéntico al prototipo aprobado y que los pies toquen siempre la última fila. Para retocar una animación se edita ese script; para cambiar un color, la paleta del personaje.
 
 ### Formato de los personajes
 
-`public/assets/sprites/<id>.png`: una sola fila de **9 frames**, cada uno de **16×20 px**, con fondo transparente, mirando hacia la **derecha** (o de frente). Al caminar a la izquierda el juego lo voltea solo.
+`public/assets/sprites/<id>.png`: una sola fila de **9 frames**, con fondo transparente, de frente. Al caminar a la izquierda el juego los voltea solos.
+
+| Personaje | Frame | Alto visible (`height`) |
+|---|---|---|
+| Miguel | 20×28 | 28 |
+| Lía | 20×28 | 27 |
+| Miguelito | 20×20 | 20 |
+| Ratencio | 22×20 | 17 |
 
 | Frame | Uso |
 |---|---|
-| 0 | Quieto |
-| 1 | Quieto (respiración) |
-| 2–5 | Caminar (4 pasos) |
-| 6–7 | Reacción (contento, saltito) |
+| 0 | Reposo |
+| 1 | Respiración |
+| 2–5 | Caminar: paso, intermedio, paso, intermedio |
+| 6–7 | Reacción alegre (el saltito lo añade el juego) |
 | 8 | Parpadeo |
 
-Los pies deben tocar el borde inferior del frame.
+Los pies tocan siempre el borde inferior del frame, que es el punto de apoyo del juego.
 
-**Otro tamaño o número de frames:** cambia `frameWidth`/`frameHeight` en `config/assets.js` y los índices de `animations` del personaje en `config/characters.js` (o `DEFAULT_ANIMATIONS` para todos). Ajusta también `height` (alto visible, para colocar los globos encima de la cabeza).
+**Otro tamaño o número de frames:** cambia `frameWidth`/`frameHeight` en `config/assets.js`, los índices de `animations` en `config/characters.js` (o `DEFAULT_ANIMATIONS` para todos) y `height`. Si los personajes cambian de ancho, revisa `distance` en `config/interactions.js`.
 
-### Otros recursos
+Vistas para revisar: `docs/art/sprites/<id>-frames.png` (los 9 fotogramas ×8), `animations-preview.gif` y `en-el-parque.gif` (grabación del juego).
+
+### Otros recursos (provisionales)
 
 | Archivo | Formato |
 |---|---|
@@ -85,11 +100,9 @@ Los pies deben tocar el borde inferior del frame.
 
 Si cambias el fondo, revisa `config/world.js` para que la zona caminable, los árboles y las flores coincidan con el nuevo dibujo.
 
-### Regenerar los provisionales
-
 ```bash
-npm run placeholders              # crea solo los que falten
-npm run placeholders -- --force   # ¡sobrescribe todos, incluido el arte definitivo!
+npm run placeholders              # crea los recursos del escenario que falten
+npm run placeholders -- --force   # los regenera todos (ya no toca a los personajes)
 ```
 
 ## Añadir diálogos

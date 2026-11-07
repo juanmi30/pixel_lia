@@ -1,6 +1,6 @@
 # Prototipos de personajes
 
-Sprites **estáticos** para validar la identidad visual antes de animar. El juego no los usa: los sprites de `public/assets/sprites/` siguen siendo los provisionales.
+Arte **aprobado** de los cuatro personajes (Etapa 2B/2C). Las hojas animadas que usa el juego se generan a partir de estos módulos con `npm run sprites` (ver `docs/art/sprites/`).
 
 ## Etapa 2B (vigente)
 

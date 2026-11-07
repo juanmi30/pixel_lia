@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "placeholders": "node scripts/generate-placeholders.mjs",
+    "sprites": "node docs/art/sprites/build-sprites.mjs",
     "test": "node --test"
   },
   "dependencies": {

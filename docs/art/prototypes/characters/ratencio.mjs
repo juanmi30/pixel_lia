@@ -25,6 +25,7 @@ export const PALETTE = {
   N: hex('#c96f82'), // naricita
   n: hex('#f6c9d1'), // brillo del hocico
   E: hex('#3e3644'), // ojos
+  B: hex('#ef9fae'), // rubor (solo en la reacción alegre)
   F: hex('#c9a7ad'), // patitas
   T: hex('#9c8088'), // cola
 };
@@ -37,8 +38,17 @@ export const SHAPE = {
   snout: { cy: 11.2, rx: 4.0, ry: 3.0 },
 };
 
-export function build() {
-  const { width: W, height: H, body, snout } = SHAPE;
+/**
+ * Dibuja a Ratencio. Sin opciones produce exactamente el sprite aprobado.
+ * Las opciones solo las usa el generador de animaciones:
+ *   body   ajustes de la silueta (p. ej. { top: 4 } para aplastar la cúpula)
+ *   eyes   'sleepy' (aprobado) | 'happy' (arquitos ^) | 'closed' (rayita)
+ *   feet   'both' | 'left' | 'right' (la otra patita, levantada, no se ve)
+ *   blush  rubor junto al hocico
+ */
+export function build({ body: bodyOverrides = {}, eyes = 'sleepy', feet = 'both', blush = false } = {}) {
+  const { width: W, height: H, snout } = SHAPE;
+  const body = { ...SHAPE.body, ...bodyOverrides };
   const P = PALETTE;
   const c = createCanvas(W, H);
   const cx = W / 2;
@@ -96,16 +106,31 @@ export function build() {
 
   // Ojos pequeños y tranquilos: rayita cerrada de 2 px con la esquina exterior
   // un poco caída (adormilado)
-  both(7, 7, 'E');
-  both(8, 7, 'E');
-  both(6, 8, 'E');
+  if (eyes === 'happy') {
+    for (const [x, y] of [[6, 8], [7, 7], [8, 8]]) both(x, y, 'E');
+  } else if (eyes === 'closed') {
+    both(7, 8, 'E');
+    both(8, 8, 'E');
+  } else {
+    both(7, 7, 'E');
+    both(8, 7, 'E');
+    both(6, 8, 'E');
+  }
+  if (blush) {
+    both(5, 9, 'B');
+    both(6, 9, 'B');
+  }
 
   // Bracitos: pequeños bultos más claros a los lados
   both(4, 12, 'l');
   both(4, 13, 'g');
 
   // Patitas diminutas: solo asoman por debajo del cuerpo
-  for (const [x, y, k] of [[6, 19, 'O'], [7, 19, 'F'], [8, 19, 'O']]) both(x, y, k);
+  const footPixels = [[6, 19, 'O'], [7, 19, 'F'], [8, 19, 'O']];
+  for (const [x, y, k] of footPixels) {
+    if (feet !== 'right') c.set(x, y, P[k]); // patita izquierda
+    if (feet !== 'left') c.set(mirror(x), y, P[k]); // patita derecha
+  }
 
   // Cola: queda oculta detrás del cuerpo en la vista frontal (a esta escala una
   // puntita suelta parecía un guion despegado). El color `T` se reserva para

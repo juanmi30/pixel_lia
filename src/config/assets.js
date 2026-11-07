@@ -24,10 +24,11 @@ export const ASSETS = {
 
   spritesheets: {
     // Personajes: 9 frames en una fila (ver README → "Formato de los personajes").
-    miguel: { url: 'assets/sprites/miguel.png', frameWidth: 16, frameHeight: 20 },
-    lia: { url: 'assets/sprites/lia.png', frameWidth: 16, frameHeight: 20 },
-    miguelito: { url: 'assets/sprites/miguelito.png', frameWidth: 16, frameHeight: 20 },
-    ratencio: { url: 'assets/sprites/ratencio.png', frameWidth: 16, frameHeight: 20 },
+    // Se generan con `npm run sprites` a partir del arte aprobado.
+    miguel: { url: 'assets/sprites/miguel.png', frameWidth: 20, frameHeight: 28 },
+    lia: { url: 'assets/sprites/lia.png', frameWidth: 20, frameHeight: 28 },
+    miguelito: { url: 'assets/sprites/miguelito.png', frameWidth: 20, frameHeight: 20 },
+    ratencio: { url: 'assets/sprites/ratencio.png', frameWidth: 22, frameHeight: 20 },
 
     // Escenario y efectos
     tree: { url: 'assets/props/tree.png', frameWidth: 32, frameHeight: 44 },

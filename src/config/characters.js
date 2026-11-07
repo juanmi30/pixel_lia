@@ -9,7 +9,8 @@
  * Un personaje puede sobrescribir cualquiera con su propia clave `animations`.
  */
 export const DEFAULT_ANIMATIONS = {
-  idle: { frames: [0, 1, 0, 1, 0, 8], frameRate: 3, repeat: -1 },
+  // Respiración pausada (0 ↔ 1) y un parpadeo (8) al final de cada ciclo.
+  idle: { frames: [0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 8], frameRate: 4, repeat: -1 },
   walk: { frames: [2, 3, 4, 5], frameRate: 8, repeat: -1 },
   react: { frames: [6, 7], frameRate: 6, repeat: -1 },
 };
@@ -23,7 +24,7 @@ export const CHARACTERS = [
     speed: 24, // píxeles de arte por segundo
     idleMs: [1500, 4200], // espera aleatoria entre paseos
     wanderRadius: 110, // distancia máxima de cada paseo
-    height: 19, // alto visible (para colocar diálogos y emotes encima)
+    height: 28, // alto visible (para colocar diálogos y emotes encima)
     tapEmote: 'miniHeart',
   },
   {
@@ -34,7 +35,7 @@ export const CHARACTERS = [
     speed: 23,
     idleMs: [1800, 4800],
     wanderRadius: 110,
-    height: 19,
+    height: 27,
     tapEmote: 'heart',
   },
   {
@@ -45,7 +46,7 @@ export const CHARACTERS = [
     speed: 20,
     idleMs: [1200, 3600],
     wanderRadius: 80,
-    height: 14,
+    height: 20,
     tapEmote: 'note',
     animations: { walk: { frames: [2, 3, 4, 5], frameRate: 10, repeat: -1 } },
   },
@@ -57,7 +58,7 @@ export const CHARACTERS = [
     speed: 13, // gordito: va despacito
     idleMs: [2500, 6000],
     wanderRadius: 60,
-    height: 15,
+    height: 17,
     tapEmote: 'sparkle',
     animations: { walk: { frames: [2, 3, 4, 5], frameRate: 6, repeat: -1 } },
   },

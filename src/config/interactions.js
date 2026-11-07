@@ -7,7 +7,9 @@
  *   actor     id del personaje que se acerca.
  *   target    id del personaje que espera.
  *   weight    probabilidad relativa frente a las demás.
- *   distance  separación final entre ambos (píxeles de arte).
+ *   distance  separación final entre los centros de ambos (píxeles de arte).
+ *             Con sprites de 18–22 px de ancho, 16–18 deja a la pareja
+ *             hombro con hombro sin que se monten.
  *   emote     'heart' | 'note' | 'sparkle' | 'miniHeart' (ver assets.js).
  *   emoteCount cuántos emotes salen.
  *   durationMs cuánto dura el encuentro una vez juntos.
@@ -19,7 +21,7 @@ export const INTERACTIONS = [
     actor: 'miguel',
     target: 'lia',
     weight: 3,
-    distance: 11,
+    distance: 16,
     emote: 'heart',
     emoteCount: 3,
     durationMs: 3200,
@@ -30,7 +32,7 @@ export const INTERACTIONS = [
     actor: 'lia',
     target: 'miguel',
     weight: 3,
-    distance: 11,
+    distance: 16,
     emote: 'heart',
     emoteCount: 3,
     durationMs: 3200,
@@ -41,7 +43,7 @@ export const INTERACTIONS = [
     actor: 'miguelito',
     target: 'ratencio',
     weight: 3,
-    distance: 13,
+    distance: 18,
     emote: 'note',
     emoteCount: 2,
     durationMs: 2800,
@@ -52,7 +54,7 @@ export const INTERACTIONS = [
     actor: 'ratencio',
     target: 'miguelito',
     weight: 2,
-    distance: 13,
+    distance: 18,
     emote: 'sparkle',
     emoteCount: 2,
     durationMs: 2800,
@@ -63,7 +65,7 @@ export const INTERACTIONS = [
     actor: 'lia',
     target: 'ratencio',
     weight: 2,
-    distance: 12,
+    distance: 17,
     emote: 'heart',
     emoteCount: 2,
     durationMs: 3000,
@@ -74,7 +76,7 @@ export const INTERACTIONS = [
     actor: 'miguel',
     target: 'miguelito',
     weight: 2,
-    distance: 12,
+    distance: 17,
     emote: 'sparkle',
     emoteCount: 1,
     durationMs: 2600,
