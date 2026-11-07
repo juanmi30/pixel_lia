@@ -1,0 +1,44 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #2b2235;
+  /* Evita zoom por doble toque y el desplazamiento al tocar en el celular */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#game {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+}
+
+#game canvas {
+  image-rendering: pixelated;
+}
+
+/* Sugerencia discreta en celulares en vertical */
+.rotate-hint {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  text-align: center;
+  font: 16px 'Pixelify Sans', system-ui, sans-serif;
+  color: #ffd6e2;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+@media (orientation: portrait) and (max-width: 700px) {
+  .rotate-hint {
+    display: block;
+  }
+}
