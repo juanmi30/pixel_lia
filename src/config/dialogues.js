@@ -12,19 +12,19 @@
 export const DIALOGUES = {
   tap: {
     miguel: [
-      '¡Hola, mi amor!',
+      '¡Hola, hermocha!',
       '¿Damos una vuelta?',
       'Qué bonito está el día.',
-      'Te quiero muchísimo.',
+      'Te amo muchísimo.',
       '¿Ya viste las flores?',
       'Este es nuestro lugarcito.',
     ],
     lia: [
-      '¡Hola!',
+      '¡Hola Estrellita!',
       'Me encanta este lugarcito.',
       '¿Y Miguelito dónde anda?',
       'Qué rico el solecito.',
-      '¡Ratencio, ven acá!',
+      'Miguelito, ven acá!',
       'Hoy es un buen día.',
     ],
     miguelito: [
@@ -50,7 +50,7 @@ export const DIALOGUES = {
 
   interactions: {
     'miguel-busca-lia': {
-      actor: ['Te encontré.', '¿Me das un abrazo?', 'Hola, preciosa.'],
+      actor: ['Te encontré.', '¿Me das un abrazo?', 'Hola, hermocha.'],
       target: ['¡Miguel!', 'Hola, tú.', '¡Sí!'],
     },
     'lia-busca-miguel': {
@@ -70,7 +70,7 @@ export const DIALOGUES = {
       target: ['*se sonroja*', 'Squeak.'],
     },
     'miguel-y-miguelito': {
-      actor: ['¿Qué haces, campeón?', '¡Choca esos cinco!'],
+      actor: ['¿Qué haces, Miguelito?', '¡No me pegues!'],
       target: ['¡Uuh uuh!'],
     },
   },
